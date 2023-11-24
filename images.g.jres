@@ -1,0 +1,97 @@
+{
+    "image1": {
+        "data": "hwQFAAcAAAAAAAAAEAAAAREREQEAAAABAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "1"
+    },
+    "image2": {
+        "data": "hwQFAAcAAAAQEREAAQAAAQEAAAEBAAABEBERAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "0"
+    },
+    "image3": {
+        "data": "hwQFAAcAAAABEBEBARAAAQEQAAEBEAABEREAAQ==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "2"
+    },
+    "image4": {
+        "data": "hwQFAAcAAAABEAABARAAAQEQAAEBEAABEAERAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "3"
+    },
+    "image5": {
+        "data": "hwQFAAcAAAAREQAAABAAAAAQAAAAEAAAERERAQ==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "4"
+    },
+    "image6": {
+        "data": "hwQFAAcAAAAREQABARAAAQEQAAEBEAABARARAQ==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "5"
+    },
+    "image7": {
+        "data": "hwQFAAcAAAAREREBARAAAQEQAAEBEAABARARAQ==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "6"
+    },
+    "image8": {
+        "data": "hwQFAAcAAAABAAAAAQARAQEQAAABAQAAEQAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "7"
+    },
+    "image9": {
+        "data": "hwQFAAcAAAAREREBARAAAQEQAAEBEAABERERAQ==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "8"
+    },
+    "image10": {
+        "data": "hwQFAAcAAAAREQABARAAAQEQAAEBEAABERERAQ==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "9"
+    },
+    "image13": {
+        "data": "hwQFAAcAAABwAHAAAAcHAABwAAAABwcAcABwAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "Sign2"
+    },
+    "image14": {
+        "data": "hwQFAAcAAAAAcAAAAHAAAHBwcAAAcAAAAHAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "Sign3"
+    },
+    "image12": {
+        "data": "hwQFAAcAAAAAcAAAAHAAAABwAAAAcAAAAHAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "Sign1"
+    },
+    "image11": {
+        "data": "hwQFAAcAAAAAcAAAAHAAAHB3dwAAcAAAAHAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "Sign0"
+    },
+    "image15": {
+        "data": "hwQFAAcAAAAABwcAAAcHAAAHBwAABwcAAAcHAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "Sign4"
+    },
+    "image17": {
+        "data": "hwQFAAcAAAAFAAAAVQAAAFUFAABVAAAABQAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "Down"
+    },
+    "image16": {
+        "data": "hwQFABUAAAAAAFAAAAAAUAAAAAAAAFUAAAAAUAUAAAAAUFUAAAAAUFUAAAAAAFUAAAAAUAUAAAAAAFAAAAAAUAAAAAA=",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "Arrow"
+    },
+    "image18": {
+        "data": "hwQFAAcAAAAAAAACAAAAAgAAAAIAAAACAAAAAg==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "error"
+    },
+    "*": {
+        "mimeType": "image/x-mkcd-f4",
+        "dataEncoding": "base64",
+        "namespace": "myImages"
+    }
+}

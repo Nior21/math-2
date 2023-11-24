@@ -1,0 +1,1 @@
+<xml xmlns="https://developers.google.com/blockly/xml"><comment id="U8}jU.2A+7WUqTPZNUdZ" data="0" x="20" y="1313" h="120" w="480">let textSprite = textsprite.create(`${convertToText(out1.var1)} ${convertSignToText(out1.sign)} ${convertToText(out1.var2)}`);</comment></xml>
