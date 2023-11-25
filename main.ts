@@ -44,17 +44,14 @@ class MySprite extends Sprite {
         this.my_x = my_x;
         this.my_y = my_y;
         //this.setPosition(this._my_x * (this.fontWidth + 1) + (this._div(this.fontWidth, 2) + 1), this._my_y * (this.fontHeight + 1) + (this._div(this.fontHeight, 2) + 2));
-    }
-    
-    // Пользовательский метод для перемещения по знакоместам, а не абсолютным координатам
-    
+    }    
 }
 
 /** Класс Текст */
 class Text {
     text: string;
-    x: number;
-    y: number;
+    _my_x: number;
+    _my_y: number;
     //lastX: number = 0;
     //lastY: number = 0;
     length: number = undefined;
@@ -62,8 +59,8 @@ class Text {
 
     constructor(text: string, x: number = 0, y: number = 0) { // Создаем новый текст
         this.text = text;
-        this.x = x;
-        this.y = y;
+        this._my_x = x;
+        this._my_y = y;
         this.length = text.length;
         this.array = [];
         this._init(); // заполняем значениями с помощью метода
@@ -94,42 +91,37 @@ class Text {
 
     private _init() {
         for (let i: number = 0; i < this.length; i++) {
-            this.array.push(new MySprite(this._findChar(this.text[i]), this.x + i, this.y)) // Находим нужную картинку и генерируем в один присест
+            this.array.push(new MySprite(this._findChar(this.text[i]), this._my_x + i, this._my_y)) // Находим нужную картинку и генерируем в один присест
         }
     }
 
     // Метод перемещения всего текста разом
     public setPosition(newX: number, newY: number) {
+        this._my_x = newX;
+        this._my_y = newY;
         const deltaX = newX - this.array[0].my_x;
         const deltaY = newY - this.array[0].my_y;
+
         for (let el of this.array) {
             el.setMyPosition(
-                el.my_x + deltaX, 
+                el.my_x + deltaX,
                 el.my_y + deltaY
             );
         }
     }
 
-    // Метод для отображения курсора
+    get my_x() { return this._my_x }
+    get my_y() { return this._my_y }
+
+    set my_x(value) {
+        this._my_x = value;
+        this.setPosition(value, this._my_y);
+    }
+    set my_y(value) {
+        this._my_y = value;
+        this.setPosition(this._my_x, value);
+    }
 }
-
-// feature: нужно где-то хранить координаты занятых и не занятых ячеек, чтобы по умолчанию текст печатать ниже предыдущего
-// feature: нужно организовать перенос строки, если не помещается на экране Текст
-// todo: организовать работу с курсором.
-
-
-const array = [];
-for (let i = 0; i < 15; i++) {
-    array.push(new Text(`${i}: 1234567890/*-+`, 0, i));
-}
-
-/** Mindmap
- * Курсор - это часть текста и ограничен его размерами.
- * Курсор - это объект
- * У курсора есть my_x/my_y как у других спрайтов, но есть еще положение внутри текста связанное с знакоместом.
- * Вызов кусора должен работать как ображение к дочернему методу класса Текст
- * text.cursor.x += 1
- */
 
 class Cursor extends Text {
     public _position: number;
@@ -139,8 +131,8 @@ class Cursor extends Text {
         super(text, parent.array[position].my_x, parent.array[position].my_y);
         this._position = position;
         this.parent = parent;
-        this.x = parent.array[position].my_x;
-        this.y = parent.array[position].my_y;
+        this._my_x = parent.array[position].my_x;
+        this._my_y = parent.array[position].my_y;
         this.current = parent.array[position];
         
     }
@@ -148,21 +140,33 @@ class Cursor extends Text {
         return this._position;
     }
     set position(value) {
-        this._position = value;
-        this.x = this.parent.array[this.position].my_x;
+        if (!(value < 0 || value > (this.parent.length - 1))) {
+            this._position = value;
+            this._my_x = this.parent.array[value].my_x;
+            this.setPosition(
+                this.parent.array[value].my_x,
+                this.parent.array[value].my_y
+            )
+        }
+        
     }
 }
 
-const sdfdsf: number = 3;
-const cursor = new Cursor("|", array[0], sdfdsf);
-
 
 controller.left.onEvent(ControllerButtonEvent.Pressed, function() {
-    console.log(cursor.position)
     cursor.position--
 })
 
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
-    console.log(cursor.position)
     cursor.position++
 })
+
+
+// feature: нужно где-то хранить координаты занятых и не занятых ячеек, чтобы по умолчанию текст печатать ниже предыдущего
+// feature: нужно организовать перенос строки, если не помещается на экране Текст
+
+const array = [];
+for (let i = 0; i < 14; i++) {
+    array.push(new Text(`${i}: 1234567890/*-+`, 0, i));
+}
+const cursor = new Cursor("|", array[1], 3)
