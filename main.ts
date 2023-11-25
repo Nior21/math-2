@@ -18,7 +18,9 @@ export function create(img: Image, kind?: number): Sprite {
  * 
  * Возможно стоит просто к станадртному классу добавить возможность перемещать его не по абсолютному x/y, а по знакоместам.
  * 
- * Тогда символы создаются с дополнительным параметром координат и методом перемещения по этим координатам
+ * Cимволы создаются с дополнительным параметром координат и пользовательским методом перемещения по этим координатам
+ * 
+ * 
  */
 
 class MySprite extends Sprite {
@@ -26,8 +28,6 @@ class MySprite extends Sprite {
     private my_y: number;
     private fontWidth: number;
     private fontHeight: number;
-    private deltaWidth: number;
-    private deltaHeight: number;
 
     constructor(image: Image, my_x = 0, my_y = 0, fontWidth = 5, fontHeight = 7) {
         super(image);
@@ -36,19 +36,12 @@ class MySprite extends Sprite {
         this.my_y = my_y;
         this.fontWidth = fontWidth;
         this.fontHeight = fontHeight;
-        this.mySetPosition(
-            this.my_x * (this.fontWidth + 1) + (this._div(this.fontWidth, 2) + 1),
-            this.my_y * (this.fontHeight + 1) + (this._div(this.fontHeight, 2) + 2)
-        );
+        this.setMyPosition(this.my_x, this.my_y);
     }
 
     // Целочисленное деление без остатка
     private _div(val: number, by: number) {
         return (val - val % by) / by;
-    }
-
-    public mySetPosition(x: number, y: number) {
-        this.setPosition(x, y);
     }
     
     public get getMyX(): number {
@@ -67,6 +60,15 @@ class MySprite extends Sprite {
         this.my_y = my_y;
         this.y = this.my_y * (this.fontHeight + 1) + (this._div(this.fontHeight, 2) + 2);
     }
+
+    public setMyPosition(my_x: number, my_y: number) {
+        this.my_x = my_x;
+        this.my_y = my_y;
+        this.setPosition(this.my_x * (this.fontWidth + 1) + (this._div(this.fontWidth, 2) + 1), this.my_y * (this.fontHeight + 1) + (this._div(this.fontHeight, 2) + 2));
+    }
+    // пользовательский метод для перемещения по знакоместам, а не абсолютным координатам
+
+    
 }
 
 class Text {
@@ -116,17 +118,29 @@ class Text {
         }
     }
 
-    
+    // Метод перемещения всего текста разом
+    public setPosition(newX: number, newY: number) {
+        const deltaX = newX - this.array[0].getMyX;
+        const deltaY = newY - this.array[0].getMyY;
+        for (let el of this.array) {
+            el.setMyPosition(
+                el.getMyX + deltaX, 
+                el.getMyY + deltaY
+            );
+        }
+    }
 }
 
 // todo: нужно где-то хранить координаты занятых и не занятых ячеек
+// todo: возможно стоит ввыделять каждую группу спрайтов текста в отдельный Kind для удобства их поиска и поиска
+// последнего символа
 // todo: нужно организовать перенос строки, если не помещается на экране текст
 
-new Text('342342*323325=32532532')
+const equetion = new Text('2*2=4');
 
 for (let i = 0; i < 14; i++) {
     new Text('1234567890+-*/=1234567890', 0, i+1);
 }
 
-
+equetion.setPosition(2, 0);
 
