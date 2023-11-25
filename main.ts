@@ -117,15 +117,52 @@ class Text {
 // feature: нужно организовать перенос строки, если не помещается на экране Текст
 // todo: организовать работу с курсором.
 
+
+const array = [];
+for (let i = 0; i < 15; i++) {
+    array.push(new Text(`${i}: 1234567890/*-+`, 0, i));
+}
+
 /** Mindmap
  * Курсор - это часть текста и ограничен его размерами.
- * Его наличие нужно заранее указывать, тогда он при создании он будет отображаться в начале этого текста
  * Курсор - это объект
  * У курсора есть my_x/my_y как у других спрайтов, но есть еще положение внутри текста связанное с знакоместом.
  * Вызов кусора должен работать как ображение к дочернему методу класса Текст
  * text.cursor.x += 1
  */
 
-for (let i = 0; i < 15; i++) {
-    new Text(`${i}: 1234567890/*-+`, 0, i)
+class Cursor extends Text {
+    public _position: number;
+    public parent: Text;
+    public current: MySprite;
+    constructor(text: string, parent: Text, position: number) { // Создаем новый текст
+        super(text, parent.array[position].my_x, parent.array[position].my_y);
+        this._position = position;
+        this.parent = parent;
+        this.x = parent.array[position].my_x;
+        this.y = parent.array[position].my_y;
+        this.current = parent.array[position];
+        
+    }
+    get position() {
+        return this._position;
+    }
+    set position(value) {
+        this._position = value;
+        this.x = this.parent.array[this.position].my_x;
+    }
 }
+
+const sdfdsf: number = 3;
+const cursor = new Cursor("|", array[0], sdfdsf);
+
+
+controller.left.onEvent(ControllerButtonEvent.Pressed, function() {
+    console.log(cursor.position)
+    cursor.position--
+})
+
+controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
+    console.log(cursor.position)
+    cursor.position++
+})
