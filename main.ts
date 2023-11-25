@@ -21,48 +21,51 @@ export function create(img: Image, kind?: number): Sprite {
  * Тогда символы создаются с дополнительным параметром координат и методом перемещения по этим координатам
  */
 
-class mySprite extends Sprite {
+class MySprite extends Sprite {
     private my_x: number;
     private my_y: number;
+    private fontWidth: number;
+    private fontHeight: number;
     private deltaWidth: number;
     private deltaHeight: number;
-    private symbolWidth: number;
-    private symbolHeight: number;
 
-    constructor(image: Image, myx = 0, myy = 0) {
+    constructor(image: Image, my_x = 0, my_y = 0, fontWidth = 5, fontHeight = 7) {
         super(image);
         // Эти параметры будут вычисляться каждый раз, каждый символ, желательно вывести в более базовый объект
-        this.deltaWidth = this._div(5, 2) + 1;
-        this.deltaHeight = this._div(7, 2) + 2;
-        this.symbolWidth = 5 + 1;
-        this.symbolHeight = 7 + 1;
-        this.mySetPosition(myx, myy);
+        this.my_x = my_x;
+        this.my_y = my_y;
+        this.fontWidth = fontWidth;
+        this.fontHeight = fontHeight;
+        this.mySetPosition(
+            this.my_x * (this.fontWidth + 1) + (this._div(this.fontWidth, 2) + 1),
+            this.my_y * (this.fontHeight + 1) + (this._div(this.fontHeight, 2) + 2)
+        );
     }
 
     // Целочисленное деление без остатка
     private _div(val: number, by: number) {
-        return (val - val % by) / by
+        return (val - val % by) / by;
     }
 
     public mySetPosition(x: number, y: number) {
-        this.setPosition(x * this.symbolWidth + this.deltaWidth, y * this.symbolWidth + this.deltaWidth);
+        this.setPosition(x, y);
     }
-
-    public get getX(): number {
+    
+    public get getMyX(): number {
         return this.my_x;
     }
-    public get getY(): number {
+    public get getMyY(): number {
         return this.my_y;
     }
 
-    public set setX(x: number) {
-        this.my_x = x; // Сохраняем на случай крайней нужды
-        this.x = x * this.symbolWidth + this.deltaWidth;
+    public set setMyX(my_x: number) {
+        this.my_x = my_x;
+        this.x = this.my_x * (this.fontWidth + 1) + (this._div(this.fontWidth, 2) + 1);
     }
 
-    public set setY(y: number) {
-        this.my_y = y;
-        this.y = y * this.symbolWidth + this.deltaWidth;
+    public set setMyY(my_y: number) {
+        this.my_y = my_y;
+        this.y = this.my_y * (this.fontHeight + 1) + (this._div(this.fontHeight, 2) + 2);
     }
 }
 
@@ -70,16 +73,17 @@ class Text {
     text: string;
     x: number;
     y: number;
-    lastX: number = 0;
-    lastY: number = 0;
+    //lastX: number = 0;
+    //lastY: number = 0;
     length: number = undefined;
-    array: Array<mySprite> = [];
+    array: Array<MySprite> = [];
 
     constructor(text: string, x: number = 0, y: number = 0) { // Создаем новый текст
         this.text = text;
         this.x = x;
         this.y = y;
         this.length = text.length;
+        this.array = [];
         this._init(); // заполняем значениями с помощью метода
     }
 
@@ -108,12 +112,21 @@ class Text {
 
     private _init() {
         for (let i: number = 0; i < this.length; i++) {
-            this.array.push(new mySprite(this._findChar(this.text[i]), this.x + i, this.y)) // Находим нужную картинку и генерируем в один присест
+            this.array.push(new MySprite(this._findChar(this.text[i]), this.x + i, this.y)) // Находим нужную картинку и генерируем в один присест
         }
     }
 
     
 }
 
+// todo: нужно где-то хранить координаты занятых и не занятых ячеек
+// todo: нужно организовать перенос строки, если не помещается на экране текст
 
-const spr = new Text('123kjhjklh4', 0, 0);
+new Text('342342*323325=32532532')
+
+for (let i = 0; i < 14; i++) {
+    new Text('1234567890+-*/=1234567890', 0, i+1);
+}
+
+
+
