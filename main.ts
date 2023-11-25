@@ -1,42 +1,21 @@
-/**
-export function create(img: Image, kind?: number): Sprite {
-    const scene = game.currentScene();
-    const sprite = new Sprite(img)
-    sprite.setKind(kind);
-    scene.physicsEngine.addSprite(sprite);
-
-    // run on created handlers
-    scene.createdHandlers
-        .filter(h => h.kind == kind)
-        .forEach(h => h.handler(sprite));
-
-    return sprite
-}
-
-
-/**
- * 
- * Возможно стоит просто к станадртному классу добавить возможность перемещать его не по абсолютному x/y, а по знакоместам.
- * 
- * Cимволы создаются с дополнительным параметром координат и пользовательским методом перемещения по этим координатам
- * 
- * 
+/** Пользовательский класс MySprite
+ * К стандартному классу Sprite добавляем пользовательские my_x/my_y координаты в системе координат,
+ * основанной на знакоместах, вместо абсолютных координат x/y
  */
-
 class MySprite extends Sprite {
-    private my_x: number;
-    private my_y: number;
+    private _my_x: number;
+    private _my_y: number;
     private fontWidth: number;
     private fontHeight: number;
 
     constructor(image: Image, my_x = 0, my_y = 0, fontWidth = 5, fontHeight = 7) {
         super(image);
         // Эти параметры будут вычисляться каждый раз, каждый символ, желательно вывести в более базовый объект
-        this.my_x = my_x;
-        this.my_y = my_y;
+        this._my_x = my_x;
+        this._my_y = my_y;
         this.fontWidth = fontWidth;
         this.fontHeight = fontHeight;
-        this.setMyPosition(this.my_x, this.my_y);
+        this.setMyPosition(this._my_x, this._my_y);
     }
 
     // Целочисленное деление без остатка
@@ -44,33 +23,34 @@ class MySprite extends Sprite {
         return (val - val % by) / by;
     }
     
-    public get getMyX(): number {
-        return this.my_x;
+    public get my_x(): number {
+        return this._my_x;
     }
-    public get getMyY(): number {
-        return this.my_y;
-    }
-
-    public set setMyX(my_x: number) {
-        this.my_x = my_x;
-        this.x = this.my_x * (this.fontWidth + 1) + (this._div(this.fontWidth, 2) + 1);
+    public get my_y(): number {
+        return this._my_y;
     }
 
-    public set setMyY(my_y: number) {
-        this.my_y = my_y;
-        this.y = this.my_y * (this.fontHeight + 1) + (this._div(this.fontHeight, 2) + 2);
+    public set my_x(value: number) {
+        this._my_x = value;
+        this.x = this._my_x * (this.fontWidth + 1) + (this._div(this.fontWidth, 2) + 1);
+    }
+    public set my_y(value: number) {
+        this._my_y = value;
+        this.y = this._my_y * (this.fontHeight + 1) + (this._div(this.fontHeight, 2) + 2);
     }
 
+    // Пользовательский метод аналог setPosition, но для перемещения по знакоместам, а не абсолютным координатам
     public setMyPosition(my_x: number, my_y: number) {
         this.my_x = my_x;
         this.my_y = my_y;
-        this.setPosition(this.my_x * (this.fontWidth + 1) + (this._div(this.fontWidth, 2) + 1), this.my_y * (this.fontHeight + 1) + (this._div(this.fontHeight, 2) + 2));
+        //this.setPosition(this._my_x * (this.fontWidth + 1) + (this._div(this.fontWidth, 2) + 1), this._my_y * (this.fontHeight + 1) + (this._div(this.fontHeight, 2) + 2));
     }
-    // пользовательский метод для перемещения по знакоместам, а не абсолютным координатам
-
+    
+    // Пользовательский метод для перемещения по знакоместам, а не абсолютным координатам
     
 }
 
+/** Класс Текст */
 class Text {
     text: string;
     x: number;
@@ -120,27 +100,32 @@ class Text {
 
     // Метод перемещения всего текста разом
     public setPosition(newX: number, newY: number) {
-        const deltaX = newX - this.array[0].getMyX;
-        const deltaY = newY - this.array[0].getMyY;
+        const deltaX = newX - this.array[0].my_x;
+        const deltaY = newY - this.array[0].my_y;
         for (let el of this.array) {
             el.setMyPosition(
-                el.getMyX + deltaX, 
-                el.getMyY + deltaY
+                el.my_x + deltaX, 
+                el.my_y + deltaY
             );
         }
     }
+
+    // Метод для отображения курсора
 }
 
-// todo: нужно где-то хранить координаты занятых и не занятых ячеек
-// todo: возможно стоит ввыделять каждую группу спрайтов текста в отдельный Kind для удобства их поиска и поиска
-// последнего символа
-// todo: нужно организовать перенос строки, если не помещается на экране текст
+// feature: нужно где-то хранить координаты занятых и не занятых ячеек, чтобы по умолчанию текст печатать ниже предыдущего
+// feature: нужно организовать перенос строки, если не помещается на экране Текст
+// todo: организовать работу с курсором.
 
-const equetion = new Text('2*2=4');
+/** Mindmap
+ * Курсор - это часть текста и ограничен его размерами.
+ * Его наличие нужно заранее указывать, тогда он при создании он будет отображаться в начале этого текста
+ * Курсор - это объект
+ * У курсора есть my_x/my_y как у других спрайтов, но есть еще положение внутри текста связанное с знакоместом.
+ * Вызов кусора должен работать как ображение к дочернему методу класса Текст
+ * text.cursor.x += 1
+ */
 
-for (let i = 0; i < 14; i++) {
-    new Text('1234567890+-*/=1234567890', 0, i+1);
+for (let i = 0; i < 15; i++) {
+    new Text(`${i}: 1234567890/*-+`, 0, i)
 }
-
-equetion.setPosition(2, 0);
-
