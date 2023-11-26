@@ -52,8 +52,7 @@ class Text {
     text: string;
     _my_x: number;
     _my_y: number;
-    //lastX: number = 0;
-    //lastY: number = 0;
+    _my_last_x: number = 0;
     length: number = undefined;
     array: Array<MySprite> = [];
 
@@ -62,6 +61,7 @@ class Text {
         this._my_x = x;
         this._my_y = y;
         this.length = text.length;
+        this._my_last_x = this._my_x + this.length;
         this.array = [];
         this._init(); // заполняем значениями с помощью метода
     }
@@ -99,6 +99,7 @@ class Text {
     public setPosition(newX: number, newY: number) {
         this._my_x = newX;
         this._my_y = newY;
+
         const deltaX = newX - this.array[0].my_x;
         const deltaY = newY - this.array[0].my_y;
 
@@ -108,6 +109,8 @@ class Text {
                 el.my_y + deltaY
             );
         }
+
+        this._my_last_x = this._my_x + this.length;
     }
 
     get my_x() { return this._my_x }
@@ -115,11 +118,19 @@ class Text {
 
     set my_x(value) {
         this._my_x = value;
+        this._my_last_x = this.my_x + this.length;
         this.setPosition(value, this._my_y);
     }
     set my_y(value) {
         this._my_y = value;
         this.setPosition(this._my_x, value);
+    }
+
+    get my_last_x() {
+        return this._my_last_x;
+    }
+    set my_last_x(value) {
+        this._my_last_x = value;
     }
 }
 
@@ -154,19 +165,117 @@ class Cursor extends Text {
 
 
 controller.left.onEvent(ControllerButtonEvent.Pressed, function() {
-    cursor.position--
+    equation.cursor ? equation.cursor.position-- : false;
 })
-
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
-    cursor.position++
+    equation.cursor ? equation.cursor.position++ : false;
 })
 
+function div(val: number, by: number) {
+    return (val - val % by) / by
+}
+function convertSignToText(sign: number) {
+    switch (sign) {
+        case 0: return "+";
+        case 1: return "-";
+        case 2: return "*";
+        case 3: return "/";
+        default: return "_";
+    }
+}
+
+// Класс текста, но с цифройв памяти
+class NumberView extends Text {
+    public _value: number;
+    constructor(value: number | string, x?: number, y?: number) {
+        const text = convertToText(value);
+        x = x ? x : 0;
+        y = y ? y : 0; 
+        super(text, x, y);
+        (typeof value == "string") ?
+            this._value = parseInt(value) :
+            this._value = value;
+    }
+
+    get value() {
+        return this._value;
+    }
+    set value(newValue) {
+        if (typeof newValue == "string") {
+            this._value = parseInt(newValue);
+        } else {
+            this._value = newValue;
+        }
+    }
+}
+
+class Equation {
+    // Нужен тип позволящий сразу указывать значения в конечный объект
+    // Тогда получится красивый перебор значений
+    var1: number;
+    sign: number;
+    var2: number;
+    answer: number;
+    cursor: Cursor;
+    eq_view: Array<NumberView>;
+    constructor() {
+        this.sign = randint(0, 3);
+        // Создаем новый рандомный пример
+        switch (this.sign) { // Случайное число от 0 до 3 означает используемый знак
+            case 0: // "-", второе число меньше первого
+                do {
+                    this.var1 = randint(1, 99); this.var2 = randint(1, 99);
+                } while (!(this.var1 >= this.var2));
+                break
+            case 1: // "+", оба числа до 99
+                this.var1 = randint(1, 99); this.var2 = randint(1, 99);
+                break
+            case 2: // "*", оба числа до 5 (указывать руками)
+                this.var1 = randint(1, 5); this.var2 = randint(1, 5);
+                break
+            case 3: // "/", первое число больше второго и делится целочисленно
+                do {
+                    this.var1 = randint(1, 25); this.var2 = randint(1, 5);
+                } while (!(this.var1 >= this.var2 && this.var1 % this.var2 == 0));
+                break
+        };
+        this.eq_view = [];
+        this.answer = 0;
+        this.init();
+    }
+
+    // [-] Генератор изображения цифр, знака и ответа, который должен отчищаться
+    public init() {
+        this.eq_view.push(new NumberView(
+            this.var1, 
+            0, 
+            1)
+        );
+        this.eq_view.push(new NumberView(
+            convertSignToText(this.sign), // Преобразовываем в арифметический символ
+            this.eq_view[this.eq_view.length - 1].my_last_x + 1,
+            1
+        ));
+        this.eq_view.push(new NumberView(
+            this.var2,
+            this.eq_view[this.eq_view.length - 1].my_last_x + 1,
+            1
+        ));
+        this.eq_view.push(new NumberView(
+            "=", 
+            this.eq_view[this.eq_view.length - 1].my_last_x + 1, 
+            1
+        ));
+        this.eq_view.push(new NumberView(
+            this.answer,
+            this.eq_view[this.eq_view.length - 1].my_last_x + 1,
+            1
+        ));
+        this.cursor = new Cursor("|", this.eq_view[this.eq_view.length - 1], 0)
+    }
+};
+
+const equation = new Equation;
 
 // feature: нужно где-то хранить координаты занятых и не занятых ячеек, чтобы по умолчанию текст печатать ниже предыдущего
 // feature: нужно организовать перенос строки, если не помещается на экране Текст
-
-const array = [];
-for (let i = 0; i < 14; i++) {
-    array.push(new Text(`${i}: 1234567890/*-+`, 0, i));
-}
-const cursor = new Cursor("|", array[1], 3)
