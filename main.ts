@@ -30,16 +30,16 @@ class MySprite extends Sprite {
     // Поиск картинок в Assets
     private _findChar(char: number) {
         switch (char) {
-            /** "0" */ case 48: return assets.image`0`;
-            /** "1" */ case 49: return assets.image`1`;
-            /** "2" */ case 50: return assets.image`2`;
-            /** "3" */ case 51: return assets.image`3`;
-            /** "4" */ case 52: return assets.image`4`;
-            /** "5" */ case 53: return assets.image`5`;
-            /** "6" */ case 54: return assets.image`6`;
-            /** "7" */ case 55: return assets.image`7`;
-            /** "8" */ case 56: return assets.image`8`;
-            /** "9" */ case 57: return assets.image`9`;
+            /** "0" */ case 48: return assets.image`48`;
+            /** "1" */ case 49: return assets.image`49`;
+            /** "2" */ case 50: return assets.image`50`;
+            /** "3" */ case 51: return assets.image`51`;
+            /** "4" */ case 52: return assets.image`52`;
+            /** "5" */ case 53: return assets.image`53`;
+            /** "6" */ case 54: return assets.image`54`;
+            /** "7" */ case 55: return assets.image`55`;
+            /** "8" */ case 56: return assets.image`56`;
+            /** "9" */ case 57: return assets.image`57`;
             /** "+" */ case 43: return assets.image`Sign0`;
             /** "-" */ case 45: return assets.image`Sign1`;
             /** "*" */ case 42: return assets.image`Sign2`;
@@ -47,6 +47,12 @@ class MySprite extends Sprite {
             /** "=" */ case 61: return assets.image`Sign4`;
             /** ":" */ case 58: return assets.image`58`;
             /** " " */ case 32: return assets.image`32`;
+            /** "A" */ case 65: return assets.image`65`;
+            /** "B" */ case 66: return assets.image`66`;
+            /** "C" */ case 67: return assets.image`67`;
+            /** "D" */ case 68: return assets.image`68`;
+            /** "E" */ case 69: return assets.image`69`;
+            /** "F" */ case 70: return assets.image`70`;
             default: return assets.image`error`;
         }
     }
@@ -318,20 +324,30 @@ class Equation {
  */
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     equation.cursor ? equation.cursor.position-- : false;
-    console.log(equation.cursor.current.value)
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     equation.cursor ? equation.cursor.position++ : false;
-    console.log(equation.cursor.current.value)
 })
 
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
-    equation.cursor ? equation.cursor.current.value++ : false;
-    console.log(equation.cursor.current.value)
+    if (equation.cursor) {
+        if (equation.cursor.current.value < 57) {
+            equation.cursor.current.value++;
+        }
+        if (equation.cursor.current.value == 57) {
+            equation.cursor.current.value = 48;
+        }
+    }
 })
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
-    equation.cursor ? equation.cursor.current.value-- : false;
-    console.log(equation.cursor.current.value)
+    if (equation.cursor) {
+        if (equation.cursor.current.value > 48) {
+            equation.cursor.current.value--;
+        }
+        if (equation.cursor.current.value == 48) {
+            equation.cursor.current.value = 57;
+        }
+    }
 })
 
 
