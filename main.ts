@@ -7,17 +7,49 @@ class MySprite extends Sprite {
     private _my_y: number;
     private fontWidth: number;
     private fontHeight: number;
+    private _value: number;
 
-    constructor(image: Image, my_x = 0, my_y = 0, fontWidth = 5, fontHeight = 7) {
+    constructor(image: Image, my_x = 0, my_y = 0, value: number | string, fontWidth = 5, fontHeight = 7) {
         super(image);
-        // Эти параметры будут вычисляться каждый раз, каждый символ, желательно вывести в более базовый объект
         this._my_x = my_x;
         this._my_y = my_y;
+        if (typeof value == "string") {
+            this._value = value.charCodeAt(0);
+        } else {
+            this._value = convertToText(value).charCodeAt(0);
+        }
         this.fontWidth = fontWidth;
         this.fontHeight = fontHeight;
         this.setMyPosition(this._my_x, this._my_y);
     }
 
+    private _init() {
+        this.setImage(this._findChar(this._value))
+    }
+
+    // Поиск картинок в Assets
+    private _findChar(char: number) {
+        switch (char) {
+            /** "0" */ case 48: return assets.image`0`;
+            /** "1" */ case 49: return assets.image`1`;
+            /** "2" */ case 50: return assets.image`2`;
+            /** "3" */ case 51: return assets.image`3`;
+            /** "4" */ case 52: return assets.image`4`;
+            /** "5" */ case 53: return assets.image`5`;
+            /** "6" */ case 54: return assets.image`6`;
+            /** "7" */ case 55: return assets.image`7`;
+            /** "8" */ case 56: return assets.image`8`;
+            /** "9" */ case 57: return assets.image`9`;
+            /** "+" */ case 43: return assets.image`Sign0`;
+            /** "-" */ case 45: return assets.image`Sign1`;
+            /** "*" */ case 42: return assets.image`Sign2`;
+            /** "/" */ case 47: return assets.image`Sign3`;
+            /** "=" */ case 61: return assets.image`Sign4`;
+            /** ":" */ case 58: return assets.image`58`;
+            /** " " */ case 32: return assets.image`32`;
+            default: return assets.image`error`;
+        }
+    }
     // Целочисленное деление без остатка
     private _div(val: number, by: number) {
         return (val - val % by) / by;
@@ -39,11 +71,22 @@ class MySprite extends Sprite {
         this.y = this._my_y * (this.fontHeight + 1) + (this._div(this.fontHeight, 2) + 2);
     }
 
+    public get value() {
+        return this._value;
+    }
+    public set value(newValue: number) {
+        this._value = newValue;
+        this._init();
+    }
+    public setTextValue(newValue: string) {
+        this._value = newValue.charCodeAt(0);
+        this._init();
+    }
+
     // Пользовательский метод аналог setPosition, но для перемещения по знакоместам, а не абсолютным координатам
     public setMyPosition(my_x: number, my_y: number) {
         this.my_x = my_x;
         this.my_y = my_y;
-        //this.setPosition(this._my_x * (this.fontWidth + 1) + (this._div(this.fontWidth, 2) + 1), this._my_y * (this.fontHeight + 1) + (this._div(this.fontHeight, 2) + 2));
     }    
 }
 
@@ -84,6 +127,8 @@ class Text {
             case "*": return assets.image`Sign2`;
             case "/": return assets.image`Sign3`;
             case "=": return assets.image`Sign4`;
+            case ":": return assets.image`58`;
+            case " ": return assets.image`32`;
             case "|": return assets.image`Arrow`; // SpriteKind.Arrow
             default: return assets.image`error`;
         }
@@ -91,7 +136,7 @@ class Text {
 
     private _init() {
         for (let i: number = 0; i < this.length; i++) {
-            this.array.push(new MySprite(this._findChar(this.text[i]), this._my_x + i, this._my_y)) // Находим нужную картинку и генерируем в один присест
+            this.array.push(new MySprite(this._findChar(this.text[i]), this._my_x + i, this._my_y, this.text[i])) // Находим нужную картинку и генерируем в один присест
         }
     }
 
@@ -158,18 +203,11 @@ class Cursor extends Text {
                 this.parent.array[value].my_x,
                 this.parent.array[value].my_y
             )
+            this.current = this.parent.array[value];
         }
         
     }
 }
-
-
-controller.left.onEvent(ControllerButtonEvent.Pressed, function() {
-    equation.cursor ? equation.cursor.position-- : false;
-})
-controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
-    equation.cursor ? equation.cursor.position++ : false;
-})
 
 function div(val: number, by: number) {
     return (val - val % by) / by
@@ -184,7 +222,7 @@ function convertSignToText(sign: number) {
     }
 }
 
-// Класс текста, но с цифройв памяти
+// Класс текста, но с цифрой в памяти
 class NumberView extends Text {
     public _value: number;
     constructor(value: number | string, x?: number, y?: number) {
@@ -215,7 +253,7 @@ class Equation {
     var1: number;
     sign: number;
     var2: number;
-    answer: number;
+    answer: string;
     cursor: Cursor;
     eq_view: Array<NumberView>;
     constructor() {
@@ -240,7 +278,7 @@ class Equation {
                 break
         };
         this.eq_view = [];
-        this.answer = 0;
+        this.answer = "000";
         this.init();
     }
 
@@ -275,7 +313,30 @@ class Equation {
     }
 };
 
-const equation = new Equation;
+/** 
+ * КОНТРОЛЛЕР 
+ */
+controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
+    equation.cursor ? equation.cursor.position-- : false;
+    console.log(equation.cursor.current.value)
+})
+controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
+    equation.cursor ? equation.cursor.position++ : false;
+    console.log(equation.cursor.current.value)
+})
+
+controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
+    equation.cursor ? equation.cursor.current.value++ : false;
+    console.log(equation.cursor.current.value)
+})
+controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
+    equation.cursor ? equation.cursor.current.value-- : false;
+    console.log(equation.cursor.current.value)
+})
+
 
 // feature: нужно где-то хранить координаты занятых и не занятых ячеек, чтобы по умолчанию текст печатать ниже предыдущего
 // feature: нужно организовать перенос строки, если не помещается на экране Текст
+// Можно использовать следующую функцию - str.charCodeAt(index)
+
+const equation = new Equation;
