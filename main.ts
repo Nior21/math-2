@@ -1,3 +1,5 @@
+let equation: any;
+
 /** Пользовательский класс MySprite
  * К стандартному классу Sprite добавляем пользовательские my_x/my_y координаты в системе координат,
  * основанной на знакоместах, вместо абсолютных координат x/y
@@ -266,22 +268,21 @@ class Equation {
         this.init();
     }
 
-    private init() {
+    public init() {
         this.var1 = 0;
         this.var2 = 0;
-        this.answer = 0;
         this.sign = randint(0, 3);
         // Создаем новый рандомный пример
         switch (this.sign) { // Случайное число от 0 до 3 означает используемый знак
-            case 0: // "-", второе число меньше первого
+            case 0: // "+", оба числа до 99
+                this.var1 = randint(1, 99); this.var2 = randint(1, 99);
+                this.answer = this.var1 + this.var2;
+                break
+            case 1: // "-", второе число меньше первого
                 do {
                     this.var1 = randint(1, 99); this.var2 = randint(1, 99);
                 } while (!(this.var1 > this.var2));
                 this.answer = this.var1 - this.var2;
-                break
-            case 1: // "+", оба числа до 99
-                this.var1 = randint(1, 99); this.var2 = randint(1, 99);
-                this.answer = this.var1 + this.var2;
                 break
             case 2: // "*", оба числа до 5 (указывать руками)
                 this.var1 = randint(1, 5); this.var2 = randint(1, 5);
@@ -330,7 +331,24 @@ class Equation {
             this.eq_view[this.eq_view.length - 1].my_last_x + 1,
             1
         ));
-        this.cursor = new Cursor("|", this.eq_view[this.eq_view.length - 1], 0)
+        if (this.cursor) {
+            this.cursor.array[0].destroy();
+        }
+        this.cursor = new Cursor("|", this.eq_view[this.eq_view.length - 1], 0);
+        
+    }
+
+    public customDelete() {
+        if (this.eq_view) {
+            for (let i of this.eq_view) {
+                for (let j of i.array) {
+                    j.destroy();
+                }
+            }
+        }
+        if (this.cursor) {
+            this.cursor.array[0].destroy();
+        }
     }
 
     public checkSolution() {
@@ -341,16 +359,19 @@ class Equation {
             const charToText = String.fromCharCode(char_obj.value);
             const textToInt = parseInt(charToText);
             const order = 10 ** (solution_view.length - 1 - i);
-            input_solution += textToInt * order; console.log(input_solution);
+            input_solution += textToInt * order;
             i++;
         }
         // todo: Проверка на успех. Нужен доп.звук и цвет
         if (input_solution == this.answer) {
             console.log(`${ input_solution } == ${this.answer} => true`)
             info.changeScoreBy(1);
-            this.init();
+            this.customDelete();
+            equation = new Equation;
         } else {
-            console.log(false)
+            console.log(`${input_solution} == ${this.answer} => false`)
+            
+
         }
     }
 };
@@ -359,16 +380,16 @@ class Equation {
  * КОНТРОЛЛЕР 
  */
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
-    equation.cursor ? equation.cursor.position-- : false;
+    equation.cursor ? --equation.cursor.position : false;
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
-    equation.cursor ? equation.cursor.position++ : false;
+    equation.cursor ? ++equation.cursor.position : false;
 })
 
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     if (equation.cursor) {
         if (equation.cursor.current.value < 57) {
-            equation.cursor.current.value++;
+            ++equation.cursor.current.value;
         } else if (equation.cursor.current.value == 57) {
             equation.cursor.current.value = 48;
         }
@@ -377,7 +398,7 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     if (equation.cursor) {
         if (equation.cursor.current.value > 48) {
-            equation.cursor.current.value--;
+            --equation.cursor.current.value;
         } else if (equation.cursor.current.value == 48) {
             equation.cursor.current.value = 57;
         }
@@ -387,10 +408,13 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     equation.checkSolution();
 })
+controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
+    equation.customDelete();
+    equation = new Equation;
+})
 
 
 // feature: нужно где-то хранить координаты занятых и не занятых ячеек, чтобы по умолчанию текст печатать ниже предыдущего
 // feature: нужно организовать перенос строки, если не помещается на экране Текст
 // todo: Найти способ менять цвет текста
-const equation = new Equation;
-
+equation = new Equation;
