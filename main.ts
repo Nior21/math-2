@@ -259,37 +259,50 @@ class Equation {
     var1: number;
     sign: number;
     var2: number;
-    answer: string;
+    answer: number;
     cursor: Cursor;
     eq_view: Array<NumberView>;
     constructor() {
+        this.init();
+    }
+
+    private init() {
+        this.var1 = 0;
+        this.var2 = 0;
+        this.answer = 0;
         this.sign = randint(0, 3);
         // Создаем новый рандомный пример
         switch (this.sign) { // Случайное число от 0 до 3 означает используемый знак
             case 0: // "-", второе число меньше первого
                 do {
                     this.var1 = randint(1, 99); this.var2 = randint(1, 99);
-                } while (!(this.var1 >= this.var2));
+                } while (!(this.var1 > this.var2));
+                this.answer = this.var1 - this.var2;
                 break
             case 1: // "+", оба числа до 99
                 this.var1 = randint(1, 99); this.var2 = randint(1, 99);
+                this.answer = this.var1 + this.var2;
                 break
             case 2: // "*", оба числа до 5 (указывать руками)
                 this.var1 = randint(1, 5); this.var2 = randint(1, 5);
+                this.answer = this.var1 * this.var2;
                 break
             case 3: // "/", первое число больше второго и делится целочисленно
                 do {
                     this.var1 = randint(1, 25); this.var2 = randint(1, 5);
                 } while (!(this.var1 >= this.var2 && this.var1 % this.var2 == 0));
+                this.answer = this.var1 / this.var2;
                 break
         };
-        this.eq_view = [];
-        this.answer = "000";
-        this.init();
-    }
-
-    // [-] Генератор изображения цифр, знака и ответа, который должен отчищаться
-    public init() {
+        if (this.eq_view) {
+            for (let i of this.eq_view) {
+                for (let j of i.array) {
+                    j.destroy();
+                }   
+            }
+        } else {
+            this.eq_view = [];
+        }
         this.eq_view.push(new NumberView(
             this.var1, 
             0, 
@@ -310,12 +323,35 @@ class Equation {
             this.eq_view[this.eq_view.length - 1].my_last_x + 1, 
             1
         ));
+        let ans_field: string = '';
+        for (let i = 0; i < this.answer.toString().length; i++) { ans_field += '0' }
         this.eq_view.push(new NumberView(
-            this.answer,
+            ans_field,
             this.eq_view[this.eq_view.length - 1].my_last_x + 1,
             1
         ));
         this.cursor = new Cursor("|", this.eq_view[this.eq_view.length - 1], 0)
+    }
+
+    public checkSolution() {
+        const solution_view = this.eq_view[4].array;
+        let input_solution = 0;
+        let i = 0;
+        for (let char_obj of solution_view) {
+            const charToText = String.fromCharCode(char_obj.value);
+            const textToInt = parseInt(charToText);
+            const order = 10 ** (solution_view.length - 1 - i);
+            input_solution += textToInt * order; console.log(input_solution);
+            i++;
+        }
+        // todo: Проверка на успех. Нужен доп.звук и цвет
+        if (input_solution == this.answer) {
+            console.log(`${ input_solution } == ${this.answer} => true`)
+            info.changeScoreBy(1);
+            this.init();
+        } else {
+            console.log(false)
+        }
     }
 };
 
@@ -333,8 +369,7 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     if (equation.cursor) {
         if (equation.cursor.current.value < 57) {
             equation.cursor.current.value++;
-        }
-        if (equation.cursor.current.value == 57) {
+        } else if (equation.cursor.current.value == 57) {
             equation.cursor.current.value = 48;
         }
     }
@@ -343,16 +378,19 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     if (equation.cursor) {
         if (equation.cursor.current.value > 48) {
             equation.cursor.current.value--;
-        }
-        if (equation.cursor.current.value == 48) {
+        } else if (equation.cursor.current.value == 48) {
             equation.cursor.current.value = 57;
         }
     }
 })
 
+controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
+    equation.checkSolution();
+})
+
 
 // feature: нужно где-то хранить координаты занятых и не занятых ячеек, чтобы по умолчанию текст печатать ниже предыдущего
 // feature: нужно организовать перенос строки, если не помещается на экране Текст
-// Можно использовать следующую функцию - str.charCodeAt(index)
-
+// todo: Найти способ менять цвет текста
 const equation = new Equation;
+
