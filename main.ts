@@ -11,27 +11,43 @@ class MySprite extends Sprite {
     private fontHeight: number;
     private _value: number;
 
-    constructor(image: Image, my_x = 0, my_y = 0, value: number | string, fontWidth = 5, fontHeight = 7) {
+    constructor(image: Image, value: string | number, my_x = 0, my_y = 0, fontWidth = 5, fontHeight = 7) {
         super(image);
-        this._my_x = my_x;
-        this._my_y = my_y;
         if (typeof value == "string") {
             this._value = value.charCodeAt(0);
-        } else {
+        } else if (typeof value == "number") {
             this._value = convertToText(value).charCodeAt(0);
         }
+        console.log(`this._value [${value}]: ${this._value}`)
+        this._init();
+
+        this._my_x = my_x;
+        this._my_y = my_y;
+        
         this.fontWidth = fontWidth;
         this.fontHeight = fontHeight;
         this.setMyPosition(this._my_x, this._my_y);
+        
     }
 
     private _init() {
-        this.setImage(this._findChar(this._value))
+        this.setImage(this._findChar(this._value));
     }
 
     // Поиск картинок в Assets
     private _findChar(char: number) {
         switch (char) {
+            // Базовые
+            case 0: return assets.image`0`;
+            case 1: return assets.image`1`;
+            case 2: return assets.image`2`;
+            case 3: return assets.image`3`;
+            case 4: return assets.image`4`;
+            case 5: return assets.image`5`;
+            case 6: return assets.image`6`;
+            case 7: return assets.image`7`;
+            case 8: return assets.image`8`;
+            case 9: return assets.image`9`;
             /** "0" */ case 48: return assets.image`48`;
             /** "1" */ case 49: return assets.image`49`;
             /** "2" */ case 50: return assets.image`50`;
@@ -55,7 +71,6 @@ class MySprite extends Sprite {
             /** "D" */ case 68: return assets.image`68`;
             /** "E" */ case 69: return assets.image`69`;
             /** "F" */ case 70: return assets.image`70`;
-
             // Кириллица Unicode 
             // источник: http://blog.kislenko.net/show.php?id=2045
             /** А */ case 1040: return assets.image`1040`
@@ -122,6 +137,7 @@ class MySprite extends Sprite {
             /** э */ case 1101: return assets.image`1101`
             /** ю */ case 1102: return assets.image`1102`
             /** я */ case 1103: return assets.image`1103`
+            /** "|" */ case 124: return assets.image`Arrow`; Cursor
             default: return assets.image`error`;
         }
     }
@@ -184,34 +200,10 @@ class Text {
         this._init(); // заполняем значениями с помощью метода
     }
 
-    // Поиск картинок в Assets
-    private _findChar(char: string) {
-        switch (char) {
-            case "0": return assets.image`0`;
-            case "1": return assets.image`1`;
-            case "2": return assets.image`2`;
-            case "3": return assets.image`3`;
-            case "4": return assets.image`4`;
-            case "5": return assets.image`5`;
-            case "6": return assets.image`6`;
-            case "7": return assets.image`7`;
-            case "8": return assets.image`8`;
-            case "9": return assets.image`9`;
-            case "+": return assets.image`Sign0`;
-            case "-": return assets.image`Sign1`;
-            case "*": return assets.image`Sign2`;
-            case "/": return assets.image`Sign3`;
-            case "=": return assets.image`Sign4`;
-            case ":": return assets.image`58`;
-            case " ": return assets.image`32`;
-            case "|": return assets.image`Arrow`; // SpriteKind.Arrow
-            default: return assets.image`error`;
-        }
-    }
-
     private _init() {
         for (let i: number = 0; i < this.length; i++) {
-            this.array.push(new MySprite(this._findChar(this.text[i]), this._my_x + i, this._my_y, this.text[i])) // Находим нужную картинку и генерируем в один присест
+            //this.array.push(new MySprite(this._findChar(this.text[i]), this._my_x + i, this._my_y, this.text[i])) // Находим нужную картинку и генерируем в один присест
+            this.array.push(new MySprite(assets.image`error`, this.text[i], this._my_x + i, this._my_y)) // Находим нужную картинку и генерируем в один присест
         }
     }
 
@@ -447,41 +439,73 @@ class Equation {
  * КОНТРОЛЛЕР 
  */
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
-    equation.cursor ? --equation.cursor.position : false;
+    equation ? --equation.cursor.position : null;
+    cursor ? --cursor.position : null;
+
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
-    equation.cursor ? ++equation.cursor.position : false;
+    equation ? ++equation.cursor.position : null;
+    cursor ? ++cursor.position : null;
 })
 
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (equation.cursor) {
+    if (equation) {
         if (equation.cursor.current.value < 57) {
             ++equation.cursor.current.value;
         } else if (equation.cursor.current.value == 57) {
             equation.cursor.current.value = 48;
         }
     }
+    if (cursor) {
+        // Схема для числовых значений
+        if (cursor.current.value < 57) {
+            ++cursor.current.value;
+        } else if (cursor.current.value == 57) {
+            cursor.current.value = 48;
+        }
+        // Схема для текстовых значений (без ограничений)
+        if (cursor.current.value > 0) {
+            ++cursor.current.value;
+        }
+    }
 })
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (equation.cursor) {
+    if (equation) {
         if (equation.cursor.current.value > 48) {
             --equation.cursor.current.value;
         } else if (equation.cursor.current.value == 48) {
             equation.cursor.current.value = 57;
         }
     }
+    if (cursor) {
+        // Схема для числовых значений
+        if (cursor.current.value > 48) {
+            --cursor.current.value;
+        } else if (cursor.current.value == 48) {
+            cursor.current.value = 57;
+        }
+        // Схема для текстовых значений (без ограничений)
+        if (cursor.current.value > 0) {
+            --cursor.current.value;
+        }
+    }
 })
 
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    equation.checkSolution();
+    equation ? equation.checkSolution() : null;
 })
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-    equation.customDelete();
-    equation = new Equation;
+    equation ? equation.customDelete() : null;
+    equation ? equation = new Equation : null;
 })
 
 
 // feature: нужно где-то хранить координаты занятых и не занятых ячеек, чтобы по умолчанию текст печатать ниже предыдущего
 // feature: нужно организовать перенос строки, если не помещается на экране Текст
 // todo: Найти способ менять цвет текста
-equation = new Equation;
+
+//equation = new Equation;
+
+const text = new Text('АБВГДЕЖЗИЙКЛМНОП', 1, 1);
+const text2 = new Text('РСТУФХЦЧШЩЪЫЬЭЮЯ', 1, 3);
+const cursor = new Cursor('|', text, 0);
