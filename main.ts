@@ -55,6 +55,73 @@ class MySprite extends Sprite {
             /** "D" */ case 68: return assets.image`68`;
             /** "E" */ case 69: return assets.image`69`;
             /** "F" */ case 70: return assets.image`70`;
+
+            // Кириллица Unicode 
+            // источник: http://blog.kislenko.net/show.php?id=2045
+            /** А */ case 1040: return assets.image`1040`
+            /** Б */ case 1041: return assets.image`1041`
+            /** В */ case 1042: return assets.image`1042`
+            /** Г */ case 1043: return assets.image`1043`
+            /** Д */ case 1044: return assets.image`1044`
+            /** Е */ case 1045: return assets.image`1045`
+            /** Ж */ case 1046: return assets.image`1046`
+            /** З */ case 1047: return assets.image`1047`
+            /** И */ case 1048: return assets.image`1048`
+            /** Й */ case 1049: return assets.image`1049`
+            /** К */ case 1050: return assets.image`1050`
+            /** Л */ case 1051: return assets.image`1051`
+            /** М */ case 1052: return assets.image`1052`
+            /** Н */ case 1053: return assets.image`1053`
+            /** О */ case 1054: return assets.image`1054`
+            /** П */ case 1055: return assets.image`1055`
+            /** Р */ case 1056: return assets.image`1056`
+            /** С */ case 1057: return assets.image`1057`
+            /** Т */ case 1058: return assets.image`1058`
+            /** У */ case 1059: return assets.image`1059`
+            /** Ф */ case 1060: return assets.image`1060`
+            /** Х */ case 1061: return assets.image`1061`
+            /** Ц */ case 1062: return assets.image`1062`
+            /** Ч */ case 1063: return assets.image`1063`
+            /** Ш */ case 1064: return assets.image`1064`
+            /** Щ */ case 1065: return assets.image`1065`
+            /** Ъ */ case 1066: return assets.image`1066`
+            /** Ы */ case 1067: return assets.image`1067`
+            /** Ь */ case 1068: return assets.image`1068`
+            /** Э */ case 1069: return assets.image`1069`
+            /** Ю */ case 1070: return assets.image`1070`
+            /** Я */ case 1071: return assets.image`1071`
+            /** а */ case 1072: return assets.image`1072`
+            /** б */ case 1073: return assets.image`1073`
+            /** в */ case 1074: return assets.image`1074`
+            /** г */ case 1075: return assets.image`1075`
+            /** д */ case 1076: return assets.image`1076`
+            /** е */ case 1077: return assets.image`1077`
+            /** ж */ case 1078: return assets.image`1078`
+            /** з */ case 1079: return assets.image`1079`
+            /** и */ case 1080: return assets.image`1080`
+            /** й */ case 1081: return assets.image`1081`
+            /** к */ case 1082: return assets.image`1082`
+            /** л */ case 1083: return assets.image`1083`
+            /** м */ case 1084: return assets.image`1084`
+            /** н */ case 1085: return assets.image`1085`
+            /** о */ case 1086: return assets.image`1086`
+            /** п */ case 1087: return assets.image`1087`
+            /** р */ case 1088: return assets.image`1088`
+            /** с */ case 1089: return assets.image`1089`
+            /** т */ case 1090: return assets.image`1090`
+            /** у */ case 1091: return assets.image`1091`
+            /** ф */ case 1092: return assets.image`1092`
+            /** х */ case 1093: return assets.image`1093`
+            /** ц */ case 1094: return assets.image`1094`
+            /** ч */ case 1095: return assets.image`1095`
+            /** ш */ case 1096: return assets.image`1096`
+            /** щ */ case 1097: return assets.image`1097`
+            /** ъ */ case 1098: return assets.image`1098`
+            /** ы */ case 1099: return assets.image`1099`
+            /** ь */ case 1100: return assets.image`1100`
+            /** э */ case 1101: return assets.image`1101`
+            /** ю */ case 1102: return assets.image`1102`
+            /** я */ case 1103: return assets.image`1103`
             default: return assets.image`error`;
         }
     }
