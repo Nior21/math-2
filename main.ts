@@ -105,38 +105,6 @@ class MySprite extends Sprite {
             /** Э */ case 1069: return assets.image`1069`
             /** Ю */ case 1070: return assets.image`1070`
             /** Я */ case 1071: return assets.image`1071`
-            /** а */ case 1072: return assets.image`1072`
-            /** б */ case 1073: return assets.image`1073`
-            /** в */ case 1074: return assets.image`1074`
-            /** г */ case 1075: return assets.image`1075`
-            /** д */ case 1076: return assets.image`1076`
-            /** е */ case 1077: return assets.image`1077`
-            /** ж */ case 1078: return assets.image`1078`
-            /** з */ case 1079: return assets.image`1079`
-            /** и */ case 1080: return assets.image`1080`
-            /** й */ case 1081: return assets.image`1081`
-            /** к */ case 1082: return assets.image`1082`
-            /** л */ case 1083: return assets.image`1083`
-            /** м */ case 1084: return assets.image`1084`
-            /** н */ case 1085: return assets.image`1085`
-            /** о */ case 1086: return assets.image`1086`
-            /** п */ case 1087: return assets.image`1087`
-            /** р */ case 1088: return assets.image`1088`
-            /** с */ case 1089: return assets.image`1089`
-            /** т */ case 1090: return assets.image`1090`
-            /** у */ case 1091: return assets.image`1091`
-            /** ф */ case 1092: return assets.image`1092`
-            /** х */ case 1093: return assets.image`1093`
-            /** ц */ case 1094: return assets.image`1094`
-            /** ч */ case 1095: return assets.image`1095`
-            /** ш */ case 1096: return assets.image`1096`
-            /** щ */ case 1097: return assets.image`1097`
-            /** ъ */ case 1098: return assets.image`1098`
-            /** ы */ case 1099: return assets.image`1099`
-            /** ь */ case 1100: return assets.image`1100`
-            /** э */ case 1101: return assets.image`1101`
-            /** ю */ case 1102: return assets.image`1102`
-            /** я */ case 1103: return assets.image`1103`
             /** "|" */ case 124: return assets.image`Arrow`; Cursor
             default: return assets.image`error`;
         }
