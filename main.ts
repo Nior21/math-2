@@ -248,6 +248,7 @@ class Text {
     }
 }
 
+let cursor: Cursor;
 class Cursor extends Text {
     public _position: number;
     public parent: Text;
@@ -370,35 +371,35 @@ class Equation {
         }
         this.eq_view.push(new NumberView(
             this.var1, 
-            0, 
-            1)
+            8, 
+            8)
         );
         this.eq_view.push(new NumberView(
             convertSignToText(this.sign), // Преобразовываем в арифметический символ
             this.eq_view[this.eq_view.length - 1].my_last_x + 1,
-            1
+            8
         ));
         this.eq_view.push(new NumberView(
             this.var2,
             this.eq_view[this.eq_view.length - 1].my_last_x + 1,
-            1
+            8
         ));
         this.eq_view.push(new NumberView(
             "=", 
             this.eq_view[this.eq_view.length - 1].my_last_x + 1, 
-            1
+           8
         ));
         let ans_field: string = '';
         for (let i = 0; i < this.answer.toString().length; i++) { ans_field += '0' }
         this.eq_view.push(new NumberView(
             ans_field,
             this.eq_view[this.eq_view.length - 1].my_last_x + 1,
-            1
+            8
         ));
-        if (this.cursor) {
-            this.cursor.array[0].destroy();
+        if (cursor) {
+            cursor.array[0].destroy();
         }
-        this.cursor = new Cursor("|", this.eq_view[this.eq_view.length - 1], 0);
+        cursor = new Cursor("|", this.eq_view[this.eq_view.length - 1], 0);
         
     }
 
@@ -410,8 +411,8 @@ class Equation {
                 }
             }
         }
-        if (this.cursor) {
-            this.cursor.array[0].destroy();
+        if (cursor) {
+            cursor.array[0].destroy();
         }
     }
 
@@ -509,7 +510,6 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
 // feature: нужно организовать перенос строки, если не помещается на экране Текст
 // todo: Найти способ менять цвет текста
 
-//equation = new Equation;
 
 
 
@@ -519,6 +519,7 @@ computer.setPosition(screen.width / 2, screen.height / 3.5);
 
 new Text('Для получения доступа', 3, 1);
 new Text('введите пароль:', 6, 6);
-const input_field = new Text('000', 11, 8);
+equation = new Equation;
+//const input_field = new Text('000', 11, 8);
 
-const cursor = new Cursor('|', input_field, 0);
+//cursor = new Cursor('|', input_field, 0);
