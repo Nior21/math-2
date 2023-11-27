@@ -339,6 +339,11 @@
         "mimeType": "image/x-mkcd-f4",
         "displayName": "1071"
     },
+    "image69": {
+        "data": "hwQQABAAAAAAAAAAAMDMzAC7u7u7vBHLsNHd3d3L3csbsczMzMsdy9vBZmbGyx3L28HWZsbL3cvbwWZmxssdy9vBZmbGyx3L28FmZsbL3cvbwWZmxssdy9vBZmbGyx3LG7HMzMzL3cuw0d3d3csdywC7u7u7vBHLAAAAAADAzMwAAAAAAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "computer"
+    },
     "*": {
         "mimeType": "image/x-mkcd-f4",
         "dataEncoding": "base64",

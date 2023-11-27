@@ -1,4 +1,38 @@
-let equation: any;
+function toUpperCaseCyrillic(str: string) {
+    return str.replace('а', 'А')
+        .replace('б', 'Б')
+        .replace('в', 'В')
+        .replace('г', 'Г')
+        .replace('д', 'Д')
+        .replace('е', 'Е')
+        .replace('ё', 'Ё')
+        .replace('ж', 'Ж')
+        .replace('з', 'З')
+        .replace('и', 'И')
+        .replace('й', 'Й')
+        .replace('к', 'К')
+        .replace('л', 'Л')
+        .replace('м', 'М')
+        .replace('н', 'Н')
+        .replace('о', 'О')
+        .replace('п', 'П')
+        .replace('р', 'Р')
+        .replace('с', 'С')
+        .replace('т', 'Т')
+        .replace('у', 'У')
+        .replace('ф', 'Ф')
+        .replace('х', 'Х')
+        .replace('ц', 'Ц')
+        .replace('ч', 'Ч')
+        .replace('ш', 'Ш')
+        .replace('щ', 'Щ')
+        .replace('ъ', 'Ъ')
+        .replace('ы', 'Ы')
+        .replace('ь', 'Ь')
+        .replace('э', 'Э')
+        .replace('ю', 'Ю')
+        .replace('я', 'Я');
+}
 
 /** Пользовательский класс MySprite
  * К стандартному классу Sprite добавляем пользовательские my_x/my_y координаты в системе координат,
@@ -14,11 +48,11 @@ class MySprite extends Sprite {
     constructor(image: Image, value: string | number, my_x = 0, my_y = 0, fontWidth = 5, fontHeight = 7) {
         super(image);
         if (typeof value == "string") {
-            this._value = value.charCodeAt(0);
-        } else if (typeof value == "number") {
+            this._value = toUpperCaseCyrillic(value).charCodeAt(0);
+        } else if (typeof value == "number") {;
             this._value = convertToText(value).charCodeAt(0);
         }
-        console.log(`this._value [${value}]: ${this._value}`)
+        
         this._init();
 
         this._my_x = my_x;
@@ -282,6 +316,9 @@ class NumberView extends Text {
     }
 }
 
+
+let equation: any;
+
 class Equation {
     // Нужен тип позволящий сразу указывать значения в конечный объект
     // Тогда получится красивый перебор значений
@@ -432,7 +469,7 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
             cursor.current.value = 48;
         }
         // Схема для текстовых значений (без ограничений)
-        if (cursor.current.value > 0) {
+        if (cursor.current.value > 57) {
             ++cursor.current.value;
         }
     }
@@ -453,7 +490,7 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
             cursor.current.value = 57;
         }
         // Схема для текстовых значений (без ограничений)
-        if (cursor.current.value > 0) {
+        if (cursor.current.value > 57) {
             --cursor.current.value;
         }
     }
@@ -474,6 +511,14 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
 
 //equation = new Equation;
 
-const text = new Text('АБВГДЕЖЗИЙКЛМНОП', 1, 1);
-const text2 = new Text('РСТУФХЦЧШЩЪЫЬЭЮЯ', 1, 3);
-const cursor = new Cursor('|', text, 0);
+
+
+
+let computer = sprites.create(assets.image`computer`, SpriteKind.Player)
+computer.setPosition(screen.width / 2, screen.height / 3.5);
+
+new Text('Для получения доступа', 3, 1);
+new Text('введите пароль:', 6, 6);
+const input_field = new Text('000', 11, 8);
+
+const cursor = new Cursor('|', input_field, 0);
