@@ -1,39 +1,3 @@
-const toUpperCaseCyrillic = (str: string) => {
-    return str.replace('а', 'А')
-        .replace('б', 'Б')
-        .replace('в', 'В')
-        .replace('г', 'Г')
-        .replace('д', 'Д')
-        .replace('е', 'Е')
-        .replace('ё', 'Ё')
-        .replace('ж', 'Ж')
-        .replace('з', 'З')
-        .replace('и', 'И')
-        .replace('й', 'Й')
-        .replace('к', 'К')
-        .replace('л', 'Л')
-        .replace('м', 'М')
-        .replace('н', 'Н')
-        .replace('о', 'О')
-        .replace('п', 'П')
-        .replace('р', 'Р')
-        .replace('с', 'С')
-        .replace('т', 'Т')
-        .replace('у', 'У')
-        .replace('ф', 'Ф')
-        .replace('х', 'Х')
-        .replace('ц', 'Ц')
-        .replace('ч', 'Ч')
-        .replace('ш', 'Ш')
-        .replace('щ', 'Щ')
-        .replace('ъ', 'Ъ')
-        .replace('ы', 'Ы')
-        .replace('ь', 'Ь')
-        .replace('э', 'Э')
-        .replace('ю', 'Ю')
-        .replace('я', 'Я');
-}
-
 /** Пользовательский класс MySprite
  * К стандартному классу Sprite добавляем пользовательские my_x/my_y координаты в системе координат,
  * основанной на знакоместах, вместо абсолютных координат x/y
@@ -44,28 +8,80 @@ class MySprite extends Sprite {
     private fontWidth: number;
     private fontHeight: number;
     private _value: number;
+    public color: number;
 
-    constructor(image: Image, value: string | number, my_x = 0, my_y = 0, fontWidth = 5, fontHeight = 7) {
+    constructor(image: Image, value: string | number, my_x = 0, my_y = 0, color = 1, fontWidth = 5, fontHeight = 7) {
         super(image);
         if (typeof value == "string") {
-            this._value = toUpperCaseCyrillic(value).charCodeAt(0);
-        } else if (typeof value == "number") {;
+            this._value = this._toUpperCaseCyrillic(value).charCodeAt(0);
+        } else if (typeof value == "number") {
+            ;
             this._value = convertToText(value).charCodeAt(0);
         }
-        
-        this._init();
 
-        this._my_x = my_x;
-        this._my_y = my_y;
+        this.color = color;
         
         this.fontWidth = fontWidth;
         this.fontHeight = fontHeight;
+
+        this._my_x = my_x;
+        this._my_y = my_y;
+
+        this._init();
+
         this.setMyPosition(this._my_x, this._my_y);
-        
     }
 
     private _init() {
         this.setImage(this._findChar(this._value));
+        this.image.replace(1, this.color);
+    }
+
+    public changeColor(color: number, delay: number = null) {
+        this.color = color;
+        this.image.replace(1, this.color);
+        if (delay) {
+            setTimeout(() => {
+                this.image.replace(this.color, 1);
+                this.color = 1
+            }, delay)
+        }
+    }
+    
+    private _toUpperCaseCyrillic = (str: string) => {
+        return str.replace('а', 'А')
+            .replace('б', 'Б')
+            .replace('в', 'В')
+            .replace('г', 'Г')
+            .replace('д', 'Д')
+            .replace('е', 'Е')
+            .replace('ё', 'Ё')
+            .replace('ж', 'Ж')
+            .replace('з', 'З')
+            .replace('и', 'И')
+            .replace('й', 'Й')
+            .replace('к', 'К')
+            .replace('л', 'Л')
+            .replace('м', 'М')
+            .replace('н', 'Н')
+            .replace('о', 'О')
+            .replace('п', 'П')
+            .replace('р', 'Р')
+            .replace('с', 'С')
+            .replace('т', 'Т')
+            .replace('у', 'У')
+            .replace('ф', 'Ф')
+            .replace('х', 'Х')
+            .replace('ц', 'Ц')
+            .replace('ч', 'Ч')
+            .replace('ш', 'Ш')
+            .replace('щ', 'Щ')
+            .replace('ъ', 'Ъ')
+            .replace('ы', 'Ы')
+            .replace('ь', 'Ь')
+            .replace('э', 'Э')
+            .replace('ю', 'Ю')
+            .replace('я', 'Я');
     }
 
     // Поиск картинок в Assets
@@ -147,7 +163,7 @@ class MySprite extends Sprite {
     private _div(val: number, by: number) {
         return (val - val % by) / by;
     }
-    
+
     public get my_x(): number {
         return this._my_x;
     }
@@ -180,7 +196,7 @@ class MySprite extends Sprite {
     public setMyPosition(my_x: number, my_y: number) {
         this.my_x = my_x;
         this.my_y = my_y;
-    }    
+    }
 }
 
 /** Класс Текст */
@@ -191,21 +207,30 @@ class Text {
     _my_last_x: number = 0;
     length: number = undefined;
     array: Array<MySprite> = [];
+    color: number;
 
-    constructor(text: string, x: number = 0, y: number = 0) { // Создаем новый текст
+    constructor(text: string, x: number = 0, y: number = 0, color = 1) { // Создаем новый текст
         this.text = text;
         this._my_x = x;
         this._my_y = y;
         this.length = text.length;
         this._my_last_x = this._my_x + this.length;
         this.array = [];
+        this.color = color;
         this._init(); // заполняем значениями с помощью метода
     }
 
     private _init() {
         for (let i: number = 0; i < this.length; i++) {
             //this.array.push(new MySprite(this._findChar(this.text[i]), this._my_x + i, this._my_y, this.text[i])) // Находим нужную картинку и генерируем в один присест
-            this.array.push(new MySprite(assets.image`error`, this.text[i], this._my_x + i, this._my_y)) // Находим нужную картинку и генерируем в один присест
+            this.array.push(new MySprite(assets.image`error`, this.text[i], this._my_x + i, this._my_y, this.color)) // Находим нужную картинку и генерируем в один присест
+        }
+    }
+
+    public changeColor(color: number, delay: number = null) {
+        this.color = color;
+        for (let i: number = 0; i < this.length; i++) {
+            this.array[i].changeColor(this.color, delay) // Находим нужную картинку и генерируем в один присест
         }
     }
 
@@ -259,7 +284,7 @@ class Cursor extends Text {
         this._my_x = parent.array[position].my_x;
         this._my_y = parent.array[position].my_y;
         this.current = parent.array[position];
-        
+
     }
     get position() {
         return this._position;
@@ -274,7 +299,7 @@ class Cursor extends Text {
             )
             this.current = this.parent.array[value];
         }
-        
+
     }
 }
 
@@ -297,7 +322,7 @@ class NumberView extends Text {
     constructor(value: number | string, x?: number, y?: number) {
         const text = convertToText(value);
         x = x ? x : 0;
-        y = y ? y : 0; 
+        y = y ? y : 0;
         super(text, x, y);
         (typeof value == "string") ?
             this._value = parseInt(value) :
@@ -367,13 +392,13 @@ class Equation {
             for (let i of this.eq_view) {
                 for (let j of i.array) {
                     j.destroy();
-                }   
+                }
             }
         } else {
             this.eq_view = [];
         }
         this.eq_view.push(new NumberView(
-            this.var1, 
+            this.var1,
             this.my_x,
             this.my_y)
         );
@@ -388,9 +413,9 @@ class Equation {
             this.my_y
         ));
         this.eq_view.push(new NumberView(
-            "=", 
-            this.eq_view[this.eq_view.length - 1].my_last_x + 1, 
-           this.my_y
+            "=",
+            this.eq_view[this.eq_view.length - 1].my_last_x + 1,
+            this.my_y
         ));
         let ans_field: string = '';
         for (let i = 0; i < this.answer.toString().length; i++) { ans_field += '0' }
@@ -403,7 +428,7 @@ class Equation {
             this.cursor.array[0].destroy();
         } else {
             this.cursor = new Cursor("|", this.eq_view[this.eq_view.length - 1], 0);
-        } 
+        }
     }
 
     public customDelete() {
@@ -432,15 +457,29 @@ class Equation {
         }
         // todo: Проверка на успех. Нужен доп.звук и цвет
         if (input_solution == this.answer) {
-            console.log(`${ input_solution } == ${this.answer} => true`)
+            console.log(`${input_solution} == ${this.answer} => true`)
             info.changeScoreBy(1);
-            this.customDelete();
-            equation = new Equation(this.my_x, this.my_y);
+            // меняем временно цвет на зеленый раз успех
+            music.play(music.melodyPlayable(music.baDing), music.PlaybackMode.UntilDone)
+            this.changeColor(7, 400);
+            setTimeout(() => {
+                this.customDelete(); // Удаляем старый пример
+                this.createNewEquetion(); // Создаем новый взамен старого
+            }, 500)
         } else {
+            // меняем временно цвет на красный раз ошибка
+            music.play(music.melodyPlayable(music.knock), music.PlaybackMode.InBackground)
+            this.changeColor(2, 400);
             console.log(`${input_solution} == ${this.answer} => false`)
-            
-
         }
+    }
+
+    private createNewEquetion() {
+        equation = new Equation(this.my_x, this.my_y);
+    }
+
+    private changeColor(color: number, delay: number = null) {
+        this.eq_view[4].changeColor(color, delay);
     }
 };
 
