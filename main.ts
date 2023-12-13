@@ -1,4 +1,4 @@
-function toUpperCaseCyrillic(str: string) {
+const toUpperCaseCyrillic = (str: string) => {
     return str.replace('а', 'А')
         .replace('б', 'Б')
         .replace('в', 'В')
@@ -495,18 +495,9 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
 // feature: нужно организовать перенос строки, если не помещается на экране Текст
 // todo: Найти способ менять цвет текста
 
-
-
-
-
 let computer = sprites.create(assets.image`computer`, SpriteKind.Player)
 computer.setPosition(screen.width / 2, screen.height / 3.5);
 
 new Text('Для получения доступа', 3, 1);
 new Text('решите пример:', 6, 6);
 equation = new Equation(8, 8);
-//cursor = new Cursor("|", equation.eq_view[equation.eq_view.length - 1], 0);
-//const input_field = new Text('000', 11, 8);
-
-//cursor = new Cursor('|', input_field, 0);
-
