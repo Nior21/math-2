@@ -248,7 +248,6 @@ class Text {
     }
 }
 
-let cursor: Cursor;
 class Cursor extends Text {
     public _position: number;
     public parent: Text;
@@ -318,7 +317,7 @@ class NumberView extends Text {
 }
 
 
-let equation: any;
+let equation: Equation;
 
 class Equation {
     // Нужен тип позволящий сразу указывать значения в конечный объект
@@ -329,7 +328,11 @@ class Equation {
     answer: number;
     cursor: Cursor;
     eq_view: Array<NumberView>;
-    constructor() {
+    my_x: number;
+    my_y: number;
+    constructor(x: number, y: number) {
+        this.my_x = x;
+        this.my_y = y;
         this.init();
     }
 
@@ -371,36 +374,36 @@ class Equation {
         }
         this.eq_view.push(new NumberView(
             this.var1, 
-            8, 
-            8)
+            this.my_x,
+            this.my_y)
         );
         this.eq_view.push(new NumberView(
             convertSignToText(this.sign), // Преобразовываем в арифметический символ
             this.eq_view[this.eq_view.length - 1].my_last_x + 1,
-            8
+            this.my_y
         ));
         this.eq_view.push(new NumberView(
             this.var2,
             this.eq_view[this.eq_view.length - 1].my_last_x + 1,
-            8
+            this.my_y
         ));
         this.eq_view.push(new NumberView(
             "=", 
             this.eq_view[this.eq_view.length - 1].my_last_x + 1, 
-           8
+           this.my_y
         ));
         let ans_field: string = '';
         for (let i = 0; i < this.answer.toString().length; i++) { ans_field += '0' }
         this.eq_view.push(new NumberView(
             ans_field,
             this.eq_view[this.eq_view.length - 1].my_last_x + 1,
-            8
+            this.my_y
         ));
-        if (cursor) {
-            cursor.array[0].destroy();
-        }
-        cursor = new Cursor("|", this.eq_view[this.eq_view.length - 1], 0);
-        
+        if (this.cursor) {
+            this.cursor.array[0].destroy();
+        } else {
+            this.cursor = new Cursor("|", this.eq_view[this.eq_view.length - 1], 0);
+        } 
     }
 
     public customDelete() {
@@ -411,8 +414,8 @@ class Equation {
                 }
             }
         }
-        if (cursor) {
-            cursor.array[0].destroy();
+        if (this.cursor) {
+            this.cursor.array[0].destroy();
         }
     }
 
@@ -432,7 +435,7 @@ class Equation {
             console.log(`${ input_solution } == ${this.answer} => true`)
             info.changeScoreBy(1);
             this.customDelete();
-            equation = new Equation;
+            equation = new Equation(this.my_x, this.my_y);
         } else {
             console.log(`${input_solution} == ${this.answer} => false`)
             
@@ -443,66 +446,48 @@ class Equation {
 
 /** 
  * КОНТРОЛЛЕР 
+ * todo: Нельзя сделать дочерним элементом класса Cursor?
  */
-controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
-    equation ? --equation.cursor.position : null;
-    cursor ? --cursor.position : null;
 
+
+controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (equation && equation.cursor) {
+        --equation.cursor.position
+    }
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
-    equation ? ++equation.cursor.position : null;
-    cursor ? ++cursor.position : null;
+    if (equation && equation.cursor) {
+        ++equation.cursor.position
+    }
 })
 
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (equation) {
+    if (equation && equation.cursor) {
         if (equation.cursor.current.value < 57) {
             ++equation.cursor.current.value;
         } else if (equation.cursor.current.value == 57) {
             equation.cursor.current.value = 48;
         }
     }
-    if (cursor) {
-        // Схема для числовых значений
-        if (cursor.current.value < 57) {
-            ++cursor.current.value;
-        } else if (cursor.current.value == 57) {
-            cursor.current.value = 48;
-        }
-        // Схема для текстовых значений (без ограничений)
-        if (cursor.current.value > 57) {
-            ++cursor.current.value;
-        }
-    }
 })
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (equation) {
+    console.log(`equation: ${equation}`)
+    if (equation && equation.cursor) {
         if (equation.cursor.current.value > 48) {
             --equation.cursor.current.value;
         } else if (equation.cursor.current.value == 48) {
             equation.cursor.current.value = 57;
         }
     }
-    if (cursor) {
-        // Схема для числовых значений
-        if (cursor.current.value > 48) {
-            --cursor.current.value;
-        } else if (cursor.current.value == 48) {
-            cursor.current.value = 57;
-        }
-        // Схема для текстовых значений (без ограничений)
-        if (cursor.current.value > 57) {
-            --cursor.current.value;
-        }
-    }
 })
+
 
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     equation ? equation.checkSolution() : null;
 })
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     equation ? equation.customDelete() : null;
-    equation ? equation = new Equation : null;
+    equation ? equation = new Equation(equation.my_x, equation.my_y) : null;
 })
 
 
@@ -518,8 +503,10 @@ let computer = sprites.create(assets.image`computer`, SpriteKind.Player)
 computer.setPosition(screen.width / 2, screen.height / 3.5);
 
 new Text('Для получения доступа', 3, 1);
-new Text('введите пароль:', 6, 6);
-equation = new Equation;
+new Text('решите пример:', 6, 6);
+equation = new Equation(8, 8);
+//cursor = new Cursor("|", equation.eq_view[equation.eq_view.length - 1], 0);
 //const input_field = new Text('000', 11, 8);
 
 //cursor = new Cursor('|', input_field, 0);
+
